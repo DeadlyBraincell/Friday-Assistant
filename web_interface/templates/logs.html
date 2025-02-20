@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Viewer - Friday AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <script>
+        function refreshLogs() {
+            fetch("/logs/latest")
+                .then(response => response.json())
+                .then(data => {
+                    let logContainer = document.getElementById("log-container");
+                    logContainer.innerHTML = "";
+                    data.forEach(line => {
+                        let p = document.createElement("p");
+                        p.textContent = line;
+                        logContainer.appendChild(p);
+                    });
+                });
+        }
+        setInterval(refreshLogs, 5000);  // Auto-refresh logs every 5 seconds
+    </script>
+</head>
+<body>
+    <h1>System Logs</h1>
+    <div id="log-container">
+        {% for log in logs %}
+            <p>{{ log }}</p>
+        {% endfor %}
+    </div>
+    <button onclick="location.href='/logs/download'">Download Logs</button>
+    <button onclick="location.href='/logs/show_on_tv'">Show Logs on TV</button>
+</body>
+</html>

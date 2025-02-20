@@ -1,0 +1,42 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    background-color: #121212;
+    color: #ffffff;
+}
+
+h1 {
+    color: #00ffcc;
+}
+
+nav ul {
+    list-style: none;
+    padding: 0;
+}
+
+nav ul li {
+    display: inline;
+    margin-right: 20px;
+}
+
+button {
+    background-color: #00ffcc;
+    color: #121212;
+    padding: 10px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+#log-container {
+    border: 1px solid #00ffcc;
+    padding: 10px;
+    max-height: 300px;
+    overflow-y: auto;
+    background-color: #1e1e1e;
+}
+
+p {
+    font-family: monospace;
+    color: #ffffff;
+}
