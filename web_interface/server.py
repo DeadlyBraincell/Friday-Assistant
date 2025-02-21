@@ -1,57 +1,41 @@
-from flask import Flask, render_template, send_file, jsonify
-import os
-import requests
+from flask import Flask, render_template, request, jsonify
+import json
+
+CONFIG_FILE = "config.json"
 
 app = Flask(__name__)
-LOG_FILE = "error.log"
 
-HOME_ASSISTANT_URL = "http://192.168.1.200:8123/api/services/media_player/play_media"
-HA_HEADERS = {"Authorization": "Bearer YOUR_LONG_LIVED_ACCESS_TOKEN", "Content-Type": "application/json"}
-TV_ENTITY_ID = "media_player.living_room_tv"
+def load_config():
+    with open(CONFIG_FILE, "r") as file:
+        return json.load(file)
 
-def get_latest_logs(n=50):
-    """Fetch the latest n lines from the log file."""
-    if not os.path.exists(LOG_FILE):
-        return ["No logs available."]
-    
-    with open(LOG_FILE, "r") as file:
-        lines = file.readlines()
-    
-    return lines[-n:]  # Return last n lines
+def save_config(config):
+    with open(CONFIG_FILE, "w") as file:
+        json.dump(config, file, indent=4)
 
 @app.route("/")
 def home():
     """Main dashboard page."""
-    return render_template("dashboard.html")
+    config = load_config()
+    enabled_features = [key.replace("_", " ").title() for key, value in config.items() if "enabled" in value and value["enabled"]]
+    disabled_features = [key.replace("_", " ").title() for key, value in config.items() if "enabled" in value and not value["enabled"]]
+    return render_template("dashboard.html", enabled_features=enabled_features, disabled_features=disabled_features)
 
-@app.route("/logs")
-def view_logs():
-    """Log viewer page."""
-    logs = get_latest_logs()
-    return render_template("logs.html", logs=logs)
+@app.route("/toggle_feature", methods=["POST"])
+def toggle_feature():
+    """Toggles a feature on or off."""
+    data = request.get_json()
+    feature = data.get("feature")
+    state = data.get("state")
 
-@app.route("/logs/download")
-def download_logs():
-    """Allow users to download the log file."""
-    return send_file(LOG_FILE, as_attachment=True)
+    config = load_config()
 
-@app.route("/logs/latest")
-def latest_logs():
-    """Fetch latest logs dynamically for AJAX updates."""
-    logs = get_latest_logs()
-    return jsonify(logs)
-
-@app.route("/logs/show_on_tv")
-def show_logs_on_tv():
-    """Display logs on a smart TV."""
-    url = "http://your-server-ip:5000/logs"
-    payload = {
-        "entity_id": TV_ENTITY_ID,
-        "media_content_id": url,
-        "media_content_type": "browser"
-    }
-    response = requests.post(HOME_ASSISTANT_URL, headers=HA_HEADERS, json=payload)
-    return "Logs are now displayed on the TV!" if response.status_code == 200 else "Failed to display logs."
+    if feature in config:
+        config[feature]["enabled"] = state
+        save_config(config)
+        return jsonify({"message": f"{feature} has been {'enabled' if state else 'disabled'}."})
+    else:
+        return jsonify({"error": "Feature not found."}), 404
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

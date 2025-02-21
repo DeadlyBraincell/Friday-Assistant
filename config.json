@@ -6,48 +6,59 @@
         "voice": "female"
     },
     "logging": {
+        "enabled": true,
         "log_file": "error.log",
         "log_level": "info",
         "log_retention_days": 60
     },
     "memory": {
+        "enabled": true,
         "db_file": "db/assistant_memory.db",
         "max_memory_size": 500
     },
     "internet_search": {
+        "enabled": true,
         "search_engine": "google",
         "api_key": "your-google-api-key"
     },
     "weather": {
+        "enabled": true,
         "api_key": "your-weather-api-key",
         "city": "New York",
         "units": "metric"
     },
     "calendar": {
+        "enabled": true,
         "google_calendar_id": "your-calendar-id",
         "credentials_file": "credentials.json"
     },
     "music": {
+        "enabled": true,
         "amazon_music_api_key": "your-amazon-api-key"
     },
     "smart_home": {
+        "enabled": true,
         "home_assistant_url": "http://192.168.1.200:8123/api",
         "auth_token": "your-long-lived-access-token"
     },
     "tts": {
+        "enabled": true,
         "engine": "coqui",
         "voice_model": "tts_models/en/ljspeech/tacotron2-DDC"
     },
     "stt": {
+        "enabled": true,
         "engine": "whisper",
         "model": "base"
     },
     "communication": {
+        "enabled": true,
         "twilio_account_sid": "your-twilio-sid",
         "twilio_auth_token": "your-twilio-auth-token",
         "twilio_phone_number": "your-twilio-number"
     },
     "led_control": {
+        "enabled": true,
         "mqtt_broker": "192.168.1.100",
         "led_topic": "room/leds"
     },

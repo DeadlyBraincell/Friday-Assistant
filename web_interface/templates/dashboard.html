@@ -3,16 +3,44 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Friday AI Dashboard</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <title>Feature Status - Friday AI</title>
+    <script>
+        function toggleFeature(feature) {
+            let state = document.getElementById(feature).checked;
+            fetch("/toggle_feature", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ feature: feature, state: state })
+            })
+            .then(response => response.json())
+            .then(data => alert(data.message))
+            .catch(error => alert("Error: " + error));
+        }
+    </script>
 </head>
 <body>
-    <h1>Welcome to Friday AI Dashboard</h1>
-    <nav>
-        <ul>
-            <li><a href="/">Home</a></li>
-            <li><a href="/logs">View Logs</a></li>
-        </ul>
-    </nav>
+    <h1>Friday AI - Feature Status</h1>
+
+    <h2>✅ Enabled Features</h2>
+    <ul>
+        {% for feature in enabled_features %}
+            <li>{{ feature }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>❌ Disabled Features</h2>
+    <ul>
+        {% for feature in disabled_features %}
+            <li>{{ feature }}</li>
+        {% endfor %}
+    </ul>
+
+    <h2>🔧 Toggle Features</h2>
+    {% for feature in enabled_features + disabled_features %}
+        <label>
+            <input type="checkbox" id="{{ feature }}" {% if feature in enabled_features %}checked{% endif %} onchange="toggleFeature('{{ feature }}')">
+            {{ feature }}
+        </label><br>
+    {% endfor %}
 </body>
 </html>
